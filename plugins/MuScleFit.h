@@ -4,8 +4,8 @@
 /** \class MuScleFit
  *  Analyzer of the Global muon tracks
  *
- *  $Date: 2009/04/15 15:53:18 $
- *  $Revision: 1.15 $
+ *  $Date: 2009/06/04 10:30:52 $
+ *  $Revision: 1.17 $
  *  \author C.Mariotti, S.Bolognesi - INFN Torino / T.Dorigo - INFN Padova
  */
 
@@ -65,8 +65,6 @@ class MuScleFit: public edm::EDLooper, MuScleFitBase {
 
   template<typename T>
   std::vector<reco::LeafCandidate> fillMuonCollection( const std::vector<T>& tracks ); 
-  /// Additional version used to extract innerTracks or globalMuons from the muons collection. Default is globalMuon.
-  std::vector<reco::LeafCandidate> fillGlobalMuonCollection( const std::vector<reco::Muon>& tracks, const unsigned int useType = 0 ); 
  private:
 
  protected:
@@ -120,6 +118,7 @@ class MuScleFit: public edm::EDLooper, MuScleFitBase {
   int iev;
 
   bool compareToSimTracks_;
+  edm::InputTag simTracksCollection_;
 };
 
 template<typename T>

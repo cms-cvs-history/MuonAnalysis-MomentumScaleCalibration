@@ -5,14 +5,15 @@
  *  
  *  Provide basic functionalities useful for MuScleFit
  *
- *  $Date: 2009/04/28 10:06:45 $
- *  $Revision: 1.3 $
+ *  $Date: 2009/05/27 14:35:42 $
+ *  $Revision: 1.5 $
  *  \author S. Bolognesi - INFN Torino / T. Dorigo - INFN Padova
  */
 
 #include <CLHEP/Vector/LorentzVector.h>
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
+// #include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
 #include "SimDataFormats/HepMCProduct/interface/HepMCProduct.h"
 #include <DataFormats/FWLite/interface/Handle.h>
 #include "SimDataFormats/Track/interface/SimTrackContainer.h"
@@ -179,6 +180,9 @@ public:
   // Defined to allow asymmetric mass windows.
   static double leftWindowFactor;
   static double rightWindowFactor;
+
+  // This must be set to true if using events generated with Sherpa
+  static bool sherpa_;
 
 protected:
 

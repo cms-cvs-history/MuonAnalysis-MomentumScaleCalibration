@@ -143,7 +143,7 @@ process.maxEvents = cms.untracked.PSet(
     # the number of Upsilon1S events.
     # input = cms.untracked.int32(89355)
 
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(10000)
 )
 process.looper = cms.Looper(
     "MuScleFit",
@@ -320,10 +320,15 @@ process.looper = cms.Looper(
     FitStrategy = cms.int32(2),
 
     speedup = cms.bool(False),
+    OutputGenInfoFileName = cms.untracked.string("genSimRecoPlots.root"),
     # Set this to false if you do not want to use simTracks.
     # (Note that this is skipped anyway if speedup == True).
     compareToSimTracks = cms.bool(True),
-    # readPdfFromDB = cms.bool(False)
+
+    # This line is only necessary when running on fastSim
+    # SimTracksCollection = cms.untracked.InputTag("famosSimHits"),
+    # This must be set to true when using events generated with Sherpa
+    # Sherpa = cms.untracked.bool(True),
 )
 
 # Timing information

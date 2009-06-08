@@ -1,7 +1,7 @@
 /** See header file for a class description 
  *
- *  $Date: 2009/05/04 12:52:56 $
- *  $Revision: 1.8 $
+ *  $Date: 2009/06/05 10:07:40 $
+ *  $Revision: 1.13 $
  *  \author S. Bolognesi - INFN Torino / T. Dorigo, M.De Mattia - INFN Padova
  */
 // Some notes:
@@ -177,6 +177,8 @@ const unsigned int MuScleFitUtils::motherPdgIdArray[] = {23, 200553, 100553, 553
 
 double MuScleFitUtils::leftWindowFactor = 1.;
 double MuScleFitUtils::rightWindowFactor = 1.;
+
+bool MuScleFitUtils::sherpa_ = false;
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 // Find the best simulated resonance from a vector of simulated muons (SimTracks) 
@@ -281,7 +283,7 @@ pair<lorentzVector,lorentzVector> MuScleFitUtils::findBestRecoRes( const vector<
 	      recMuFromBestRes.second = (*Muon2).p4();
 	    } else {
 	      recMuFromBestRes.first = (*Muon2).p4();
-	      recMuFromBestRes.second = (*Muon1).p4();	   
+	      recMuFromBestRes.second = (*Muon1).p4();
 	    }
 	    ResFound = true; // NNBB we accept "resonances" even outside mass bounds
 	    maxprob = prob;
@@ -318,14 +320,21 @@ pair <lorentzVector, lorentzVector> MuScleFitUtils::findGenMuFromRes( const Hand
   //Loop on generated particles
   for (HepMC::GenEvent::particle_const_iterator part=Evt->particles_begin(); 
        part!=Evt->particles_end(); part++) {
-    if (fabs((*part)->pdg_id())==13 && (*part)->status()==1) {  
+    if (fabs((*part)->pdg_id())==13 && (*part)->status()==1) {
       bool fromRes = false;
       for (HepMC::GenVertex::particle_iterator mother = (*part)->production_vertex()->particles_begin(HepMC::ancestors);
 	   mother != (*part)->production_vertex()->particles_end(HepMC::ancestors); ++mother) {
         unsigned int motherPdgId = (*mother)->pdg_id();
 
-        for( int ires = 0; ires < 6; ++ires ) {
-          if( motherPdgId == motherPdgIdArray[ires] && resfind[ires] ) fromRes = true;
+        // For sherpa the resonance is not saved. The muons from the resonance can be identified
+        // by having as mother a muon of status 3.
+        if( sherpa_ ) {
+          if( motherPdgId == 13 && (*mother)->status() == 3 ) fromRes = true;
+        }
+        else {
+          for( int ires = 0; ires < 6; ++ires ) {
+            if( motherPdgId == motherPdgIdArray[ires] && resfind[ires] ) fromRes = true;
+          }
         }
 
 // 	if ((*mother)->pdg_id()==23  || (*mother)->pdg_id()==443    || (*mother)->pdg_id()==100443 || 
@@ -348,37 +357,40 @@ pair <lorentzVector, lorentzVector> MuScleFitUtils::findGenMuFromRes( const Hand
 
 pair <lorentzVector, lorentzVector> MuScleFitUtils::findSimMuFromRes( const Handle<HepMCProduct> & evtMC, const Handle<SimTrackContainer> & simTracks ){
   //Loop on simulated tracks
-  pair<lorentzVector, lorentzVector> simMuFromRes;   
+  pair<lorentzVector, lorentzVector> simMuFromRes;
   for (SimTrackContainer::const_iterator simTrack=simTracks->begin(); simTrack!=simTracks->end(); ++simTrack) {
     //Chose muons
     if (fabs((*simTrack).type())==13) {
       //If tracks from IP than find mother
       if ((*simTrack).genpartIndex()>0) {
 	HepMC::GenParticle* gp = evtMC->GetEvent()->barcode_to_particle ((*simTrack).genpartIndex()); 
+        if( gp != 0 ) {
 
-	for (HepMC::GenVertex::particle_iterator mother = gp->production_vertex()->particles_begin(HepMC::ancestors);
-	     mother!=gp->production_vertex()->particles_end(HepMC::ancestors); ++mother) {
+          for (HepMC::GenVertex::particle_iterator mother = gp->production_vertex()->particles_begin(HepMC::ancestors);
+               mother!=gp->production_vertex()->particles_end(HepMC::ancestors); ++mother) {
 
-          bool fromRes = false;
-          unsigned int motherPdgId = (*mother)->pdg_id();
-          for( int ires = 0; ires < 6; ++ires ) {
-            if( motherPdgId == motherPdgIdArray[ires] && resfind[ires] ) fromRes = true;
-          }
+            bool fromRes = false;
+            unsigned int motherPdgId = (*mother)->pdg_id();
+            for( int ires = 0; ires < 6; ++ires ) {
+              if( motherPdgId == motherPdgIdArray[ires] && resfind[ires] ) fromRes = true;
+            }
 //  	  if( ((*mother)->pdg_id() == 23     && resfind[0]) ||
 //               ((*mother)->pdg_id() == 443    && resfind[1]) ||
 //               ((*mother)->pdg_id() == 100443 && resfind[2]) || 
 //  	      ((*mother)->pdg_id() == 553    && resfind[3]) ||
 //               ((*mother)->pdg_id() == 100553 && resfind[4]) ||
 //               ((*mother)->pdg_id() == 200553 && resfind[5]) {
-          if( fromRes ) {
-	    if(gp->pdg_id() == 13)
-	      simMuFromRes.first = lorentzVector(simTrack->momentum().px(),simTrack->momentum().py(),
-                                                 simTrack->momentum().pz(),simTrack->momentum().e());
-	    else
-	      simMuFromRes.second = lorentzVector(simTrack->momentum().px(),simTrack->momentum().py(),
-                                                  simTrack->momentum().pz(),simTrack->momentum().e()); 
-	  }
-	}
+            if( fromRes ) {
+              if(gp->pdg_id() == 13)
+                simMuFromRes.first = lorentzVector(simTrack->momentum().px(),simTrack->momentum().py(),
+                                                   simTrack->momentum().pz(),simTrack->momentum().e());
+              else
+                simMuFromRes.second = lorentzVector(simTrack->momentum().px(),simTrack->momentum().py(),
+                                                    simTrack->momentum().pz(),simTrack->momentum().e()); 
+            }
+          }
+        }
+        else LogDebug("MuScleFitUtils") << "WARNING: no matching genParticle found for simTrack" << endl;
       }
     }
   }
@@ -752,7 +764,8 @@ double MuScleFitUtils::massResolution( const lorentzVector& mu1,
     if (!didit && resfind[ires]>0 && fabs(mass-ResMass[ires])<ResHalfWidth[ires]) {
       if (mass_res>ResMaxSigma[ires] && counter_resprob<100) {
 	counter_resprob++;
-	cout << "RESOLUTION PROBLEM: ires=" << ires << endl;
+	LogDebug("MuScleFitUtils") << "RESOLUTION PROBLEM: ires=" << ires << endl;
+	// cout << "RESOLUTION PROBLEM: ires=" << ires << endl;
 // 	cout << "---------------------------" << endl;
 // 	cout << "  Pt1=" << pt1 << " phi1=" << phi1 << " cotgth1=" << cos(theta1)/sin(theta1) << " - Pt2=" << pt2 
 // 	     << " phi2=" << phi2 << " cotgth2=" << cos(theta2)/sin(theta2) << endl; 
@@ -897,12 +910,13 @@ double MuScleFitUtils::probability( const double & mass, const double & massReso
       f22 = GLvalue[iY][iMassRight][iSigmaRight] / GLnorm[iY][iSigmaRight];
     PS = f11 + (f12-f11)*fracSigmaStep + (f21-f11)*fracMassStep + 
       (f22-f21-f12+f11)*fracMassStep*fracSigmaStep;    
-    if (PS>0.1 || debug>1) cout << "iRes = 0 " << " PS=" << PS << " f11,f12,f21,f22=" 
-                                   << f11 << " " << f12 << " " << f21 << " " << f22 << " " 
-                                   << " fSS=" << fracSigmaStep << " fMS=" << fracMassStep << " iSL, iSR=" 
-                                   << iSigmaLeft << " " << iSigmaRight << " GLV,GLN=" 
-                                   << GLvalue[iY][iMassLeft][iSigmaLeft] 
-                                   << " " << GLnorm[iY][iSigmaLeft] << endl;
+    // if (PS>0.1 || debug>1) cout << "iRes = 0 " << " PS=" << PS << " f11,f12,f21,f22=" 
+    if (PS>0.1 || debug>1) LogDebug("MuScleFitUtils") << "iRes = 0 " << " PS=" << PS << " f11,f12,f21,f22=" 
+                                    << f11 << " " << f12 << " " << f21 << " " << f22 << " " 
+                                    << " fSS=" << fracSigmaStep << " fMS=" << fracMassStep << " iSL, iSR=" 
+                                    << iSigmaLeft << " " << iSigmaRight << " GLV,GLN=" 
+                                    << GLvalue[iY][iMassLeft][iSigmaLeft] 
+                                    << " " << GLnorm[iY][iSigmaLeft] << endl;
   }
   else {
     LogInfo("probability") << "outside mass probability window. Setting PS["<<iRes<<"] = 0" << endl;
@@ -1198,7 +1212,13 @@ double MuScleFitUtils::massProb( const double & mass, const double & rapidity, c
 // Method to check if the mass value is within the mass window of the i-th resonance.
 inline bool MuScleFitUtils::checkMassWindow( const double & mass, const int ires )
 {
-  return( mass-ResMass[ires] > -leftWindowFactor*massWindowHalfWidth[ires][MuonType] && mass-ResMass[ires] < rightWindowFactor*massWindowHalfWidth[ires][MuonType] );
+  double massWHW=0;
+  if(MuonType<3)
+    massWHW=massWindowHalfWidth[ires][MuonType];
+  else if(MuonType > 2)
+    massWHW=massWindowHalfWidth[ires][2];
+      
+  return( mass-ResMass[ires] > -leftWindowFactor*massWHW && mass-ResMass[ires] < rightWindowFactor*massWHW );
 }
 
 // Function that returns the weight for a muon pair
@@ -1414,12 +1434,14 @@ void MuScleFitUtils::minimizeLikelihood()
       minuitLoop_ = 0;
       char name[50];
       sprintf(name, "likelihoodInLoop_%d_%d", loopCounter, iorder);
-      likelihoodInLoop_ = new TH1F(name, "likelihood value in minuit loop", 10000, 0, 10000);
-      // cout << "likelihoodInLoop_ created = " << likelihoodInLoop_ << endl;
+      TH1F * tempLikelihoodInLoop = new TH1F(name, "likelihood value in minuit loop", 10000, 0, 10000);
+      likelihoodInLoop_ = tempLikelihoodInLoop;
 // #endif
       rmin.mnexcm ("mini", arglis, 0, ierror);
 // #ifdef DEBUG
       likelihoodInLoop_->Write();
+      delete tempLikelihoodInLoop;
+      likelihoodInLoop_ = 0;
 // #endif
     }
     //if (ierror==0) {
@@ -1619,7 +1641,7 @@ vector<TGraphErrors*> MuScleFitUtils::fitMass (TH2F* histo) {
   fitFcn->SetParameters (100, 3, 91);
   fitFcn->SetParNames ("Ftop", "Fwidth", "Fmass");
   fitFcn->SetLineWidth (2);
-  
+
   // Fit slices projected along Y from bins in X 
   // -------------------------------------------
   double cont_min = 20;    // Minimum number of entries
@@ -1698,9 +1720,9 @@ vector<TGraphErrors*> MuScleFitUtils::fitMass (TH2F* histo) {
   delete e;
   delete fitFcn;
 
-  results.push_back (grM);
-  results.push_back (grW);
-  results.push_back (grC);
+  results.push_back(grM);
+  results.push_back(grW);
+  results.push_back(grC);
   return results;
 }
 
@@ -1908,8 +1930,8 @@ double MuScleFitUtils::massProb( const double & mass, const double & rapidity, c
   GL->SetParameters (ResGamma[ires], ResMass[ires], mass, massResol);
   GL->CalcGaussLegendreSamplingPoints (np, x, w, 0.1e-15);
   P = GL->IntegralFast (np, x, w, ResMass[ires]-10*ResGamma[ires], ResMass[ires]+10*ResGamma[ires]);
-  delete x;
-  delete w;
+  delete[] x;
+  delete[] w;
 
   // If we are too far away we set P to epsilon and forget about this event
   // ----------------------------------------------------------------------
