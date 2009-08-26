@@ -4,8 +4,8 @@
 /** \class Histograms
  *  Collection of histograms for GLB muon analysis
  *
- *  $Date: 2009/01/09 15:36:48 $
- *  $Revision: 1.2 $
+ *  $Date: 2009/01/14 15:34:14 $
+ *  $Revision: 1.3 $
  *  \author S. Bolognesi - INFN Torino / T.Dorigo - INFN Padova
  */
 
@@ -58,16 +58,16 @@ public:
   // Operations
   // ----------
   virtual void Fill (const reco::Particle::LorentzVector & p4) {};
-  virtual void Fill (const HepLorentzVector & momentum) {};
+  virtual void Fill (const CLHEP::HepLorentzVector & momentum) {};
   virtual void Fill (const reco::Particle::LorentzVector & p1, const reco::Particle::LorentzVector & p2) {};
   virtual void Fill (const reco::Particle::LorentzVector & p1, const reco::Particle::LorentzVector & p2, const int charge) {};
-  virtual void Fill (const HepLorentzVector & momentum1, const HepLorentzVector & momentum2) {};
-  virtual void Fill (const HepLorentzVector & momentum1, const HepLorentzVector & momentum2, const int charge) {};
-  virtual void Fill (const HepLorentzVector & p1, const reco::Particle::LorentzVector & p2) {};
+  virtual void Fill (const CLHEP::HepLorentzVector & momentum1, const CLHEP::HepLorentzVector & momentum2) {};
+  virtual void Fill (const CLHEP::HepLorentzVector & momentum1, const CLHEP::HepLorentzVector & momentum2, const int charge) {};
+  virtual void Fill (const CLHEP::HepLorentzVector & p1, const reco::Particle::LorentzVector & p2) {};
   virtual void Fill (const reco::Particle::LorentzVector & p4, const double & likeValue) {};
   virtual void Fill (const reco::Particle::LorentzVector & p4, const double & resValue, const int charge) {};
   virtual void Fill (const reco::Particle::LorentzVector & p4, const double & genValue, const double recValue, const int charge) {};
-  virtual void Fill (const HepLorentzVector & p, const double & likeValue) {};
+  virtual void Fill (const CLHEP::HepLorentzVector & p, const double & likeValue) {};
   virtual void Fill (const int & number) {};
   virtual void Fill( const reco::Particle::LorentzVector & recoP1, const int charge1,
                      const reco::Particle::LorentzVector & genP1,
@@ -149,10 +149,10 @@ class HParticle : public Histograms {
   ~HParticle() {}
 
   virtual void Fill (const reco::Particle::LorentzVector & p4) {
-    Fill(HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
+    Fill(CLHEP::HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
   }
 
-  virtual void Fill (HepLorentzVector momentum) {
+  virtual void Fill (CLHEP::HepLorentzVector momentum) {
     hPt->Fill(momentum.perp());
     hEta->Fill(momentum.eta());
     hPhi->Fill(momentum.phi());
@@ -243,15 +243,15 @@ class HDelta : public Histograms {
   }
   
   virtual void Fill (const reco::Particle::LorentzVector & p1, const reco::Particle::LorentzVector & p2) {
-    Fill (HepLorentzVector(p1.x(),p1.y(),p1.z(),p1.t()), 
-	  HepLorentzVector(p2.x(),p2.y(),p2.z(),p2.t()));
+    Fill (CLHEP::HepLorentzVector(p1.x(),p1.y(),p1.z(),p1.t()), 
+	  CLHEP::HepLorentzVector(p2.x(),p2.y(),p2.z(),p2.t()));
   }
 
-  virtual void Fill (const HepLorentzVector & p1, const reco::Particle::LorentzVector & p2) {
-    Fill (p1,HepLorentzVector(p2.x(),p2.y(),p2.z(),p2.t()));
+  virtual void Fill (const CLHEP::HepLorentzVector & p1, const reco::Particle::LorentzVector & p2) {
+    Fill (p1,CLHEP::HepLorentzVector(p2.x(),p2.y(),p2.z(),p2.t()));
   }
 
-  virtual void Fill (const HepLorentzVector & momentum1, const HepLorentzVector & momentum2) {
+  virtual void Fill (const CLHEP::HepLorentzVector & momentum1, const CLHEP::HepLorentzVector & momentum2) {
     hEta->Fill(fabs( momentum1.eta()-momentum2.eta() ));
     hEtaSign->Fill(momentum1.eta()-momentum2.eta());
     hPhi->Fill(MuScleFitUtils::deltaPhi(momentum1.phi(),momentum2.phi()));
@@ -328,10 +328,10 @@ class HPartVSEta : public Histograms {
   }
 
   virtual void Fill (const reco::Particle::LorentzVector & p4) {
-    Fill (HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
+    Fill (CLHEP::HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
   }
 
-  virtual void Fill (const HepLorentzVector & momentum) {
+  virtual void Fill (const CLHEP::HepLorentzVector & momentum) {
     // if (momentum.eta()<-1.2)                              hBackw->Fill (momentum);
     //  else if (momentum.eta()<-0.8 && momentum.eta()>-1.2) hWm2->Fill (momentum);
     //  else if (momentum.eta()<-0.3 && momentum.eta()>-0.8) hWm1->Fill (momentum);
@@ -444,10 +444,10 @@ class HPartVSPhi : public Histograms{
   }
 
   void Fill(const reco::Particle::LorentzVector & p4) {
-    Fill(HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
+    Fill(CLHEP::HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
   }
 
-  void Fill(const HepLorentzVector & momentum) {
+  void Fill(const CLHEP::HepLorentzVector & momentum) {
     //if (momentum.phi()>1.57)                           hSec1->Fill(momentum);
     //else if (momentum.phi()<1.57 && momentum.phi()>0)  hSec2->Fill(momentum);
     //else if (momentum.phi()<0 && momentum.phi()>-1.57) hSec3->Fill(momentum);
@@ -579,10 +579,10 @@ class HPartVSPt : public Histograms{
   }
 
   virtual void Fill(const reco::Particle::LorentzVector & p4) {
-    Fill(HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
+    Fill(CLHEP::HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()));
   }
 
-  virtual void Fill(const HepLorentzVector & momentum) {
+  virtual void Fill(const CLHEP::HepLorentzVector & momentum) {
     hMassVSPt->Fill(momentum.eta(),momentum.m());
     hMassVSPt_prof->Fill(momentum.eta(),momentum.m());    
   }
@@ -644,11 +644,11 @@ class HMassVSPart : public Histograms{
   } 
 
   virtual void Fill(const reco::Particle::LorentzVector & p41, const reco::Particle::LorentzVector & p42, const int charge) {
-    Fill(HepLorentzVector(p41.x(),p41.y(),p41.z(),p41.t()),
-	 HepLorentzVector(p42.x(),p42.y(),p42.z(),p42.t()), charge);
+    Fill(CLHEP::HepLorentzVector(p41.x(),p41.y(),p41.z(),p41.t()),
+	 CLHEP::HepLorentzVector(p42.x(),p42.y(),p42.z(),p42.t()), charge);
   }
   
-   virtual void Fill(const HepLorentzVector & momentum1, const HepLorentzVector & momentum2, const int charge) { 
+   virtual void Fill(const CLHEP::HepLorentzVector & momentum1, const CLHEP::HepLorentzVector & momentum2, const int charge) { 
      hMassVSPt->Fill(momentum1.perp(),momentum2.m()); 
      //hMassVSPt_prof->Fill(momentum1.perp(),momentum2.m()); 
      hMassVSEta->Fill(momentum1.eta(),momentum2.m()); 
@@ -888,10 +888,10 @@ class HLikelihoodVSPart : public Histograms{
   } 
 
   virtual void Fill(const reco::Particle::LorentzVector & p4, const double & likeValue) {
-    Fill(HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()), likeValue);
+    Fill(CLHEP::HepLorentzVector(p4.x(),p4.y(),p4.z(),p4.t()), likeValue);
   }
   
-   virtual void Fill(HepLorentzVector momentum, double likeValue) { 
+   virtual void Fill(CLHEP::HepLorentzVector momentum, double likeValue) { 
      hLikeVSPt->Fill(momentum.perp(),likeValue); 
      hLikeVSEta->Fill(momentum.eta(),likeValue); 
      hLikeVSPhi->Fill(momentum.phi(),likeValue); 
