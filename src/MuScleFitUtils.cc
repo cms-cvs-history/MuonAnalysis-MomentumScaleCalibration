@@ -1,7 +1,7 @@
 /** See header file for a class description 
  *
- *  $Date: 2009/11/10 11:14:53 $
- *  $Revision: 1.23 $
+ *  $Date: 2010/01/04 12:02:27 $
+ *  $Revision: 1.24 $
  *  \author S. Bolognesi - INFN Torino / T. Dorigo, M. De Mattia - INFN Padova
  */
 // Some notes:
@@ -719,7 +719,7 @@ lorentzVector MuScleFitUtils::fromPtEtaPhiToPxPyPz( const double* ptEtaPhiE )
 
 // Dimuon mass
 // -----------
-inline double MuScleFitUtils::invDimuonMass( const lorentzVector& mu1, 
+double MuScleFitUtils::invDimuonMass( const lorentzVector& mu1, 
                                              const lorentzVector& mu2 )
 {
   return (mu1+mu2).mass();
@@ -1235,7 +1235,7 @@ double MuScleFitUtils::massProb( const double & mass, const double & rapidity, c
 }
 
 // Method to check if the mass value is within the mass window of the i-th resonance.
-inline bool MuScleFitUtils::checkMassWindow( const double & mass, const int ires, const double & resMass, const double & leftFactor, const double & rightFactor )
+bool MuScleFitUtils::checkMassWindow( const double & mass, const int ires, const double & resMass, const double & leftFactor, const double & rightFactor )
 {
 //   return( mass-ResMass[ires] > -leftFactor*massWindowHalfWidth[ires][MuonTypeForCheckMassWindow]
 //           && mass-ResMass[ires] < rightFactor*massWindowHalfWidth[ires][MuonTypeForCheckMassWindow] );
