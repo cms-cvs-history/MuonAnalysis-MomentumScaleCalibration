@@ -1,8 +1,8 @@
 //  \class MuScleFitPlotter
 //  Plotter for simulated,generated and reco info of muons
 //
-//  $Date: 2009/10/30 10:49:46 $
-//  $Revision: 1.12 $
+//  $Date: 2009/11/03 07:34:37 $
+//  $Revision: 1.13 $
 //  \author  C.Mariotti, S.Bolognesi - INFN Torino / T.Dorigo, M.De Mattia - INFN Padova
 //
 // ----------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ void MuScleFitPlotter::fillGen1(Handle<GenParticleCollection> genParticles)
 
   for( GenParticleCollection::const_iterator mcIter=genParticles->begin(); mcIter!=genParticles->end(); ++mcIter ) {
     int status = mcIter->status();
-    int pdgId = abs(mcIter->pdgId());
+    int pdgId = std::abs(mcIter->pdgId());
     //Check if it's a resonance
     if( status == 2 &&
         ( pdgId==23  || pdgId==443    || pdgId==100443 ||
@@ -73,7 +73,7 @@ void MuScleFitPlotter::fillGen1(Handle<GenParticleCollection> genParticles)
     }
     //Check if it's a muon from a resonance
     if( status==1 && pdgId==13 ) {
-      int momPdgId = abs(mcIter->mother()->pdgId());
+      int momPdgId = std::abs(mcIter->mother()->pdgId());
       if( momPdgId==23  || momPdgId==443    || momPdgId==100443 || 
           momPdgId==553 || momPdgId==100553 || momPdgId==200553 ) {
         if( momPdgId == 23 ) mothersFound[0] = 1;
@@ -152,7 +152,7 @@ void MuScleFitPlotter::fillGen2(Handle<HepMCProduct> evtMC, bool sherpaFlag_)
     for (HepMC::GenEvent::particle_const_iterator part=Evt->particles_begin(); 
 	 part!=Evt->particles_end(); part++) {
       int status = (*part)->status();
-      int pdgId = abs((*part)->pdg_id());
+      int pdgId = std::abs((*part)->pdg_id());
       //cout<<"PDG ID "<< (*part)->pdg_id() <<"    status "<< (*part)->status()
       //<<"   pt "<<(*part)->momentum().perp()<< "     eta  "<<(*part)->momentum().eta()<<endl    ;
       //Check if it's a resonance	
@@ -341,7 +341,7 @@ void MuScleFitPlotter::fillHistoMap() {
 // -----------------
 void MuScleFitPlotter::writeHistoMap() {
   outputFile->cd();
-  for (map<string, Histograms*>::const_iterator histo=mapHisto.begin(); 
+  for (std::map<std::string, Histograms*>::const_iterator histo=mapHisto.begin(); 
        histo!=mapHisto.end(); histo++) {
     (*histo).second->Write();
   }

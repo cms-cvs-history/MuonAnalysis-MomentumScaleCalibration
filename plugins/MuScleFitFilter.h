@@ -10,9 +10,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-#include "FWCore/ParameterSet/interface/InputTag.h"
-
-using namespace std;
+#include "FWCore/Utilities/interface/InputTag.h"
 
 // Class declaration
 // -----------------
@@ -23,7 +21,6 @@ class MuScleFitFilter : public edm::EDFilter {
   ~MuScleFitFilter();
 
  private:
-  virtual void beginJob(const edm::EventSetup&) {};
   virtual bool filter(edm::Event&, const edm::EventSetup&);
   virtual void endJob() {};
 
@@ -33,8 +30,8 @@ class MuScleFitFilter : public edm::EDFilter {
   int eventsWritten;
   bool debug;
   int theMuonType;
-  vector<double> Mmin;
-  vector<double> Mmax;
+  std::vector<double> Mmin;
+  std::vector<double> Mmax;
   int maxWrite;
   unsigned int minimumMuonsNumber;
 
