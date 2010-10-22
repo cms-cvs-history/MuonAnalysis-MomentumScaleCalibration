@@ -4,15 +4,15 @@
 /** \class MuScleFit
  *  Analyzer of the Global muon tracks
  *
- *  $Date: 2009/10/28 16:54:27 $
- *  $Revision: 1.23 $
+ *  $Date: 2010/05/11 22:22:39 $
+ *  $Revision: 1.34 $
  *  \author C.Mariotti, S.Bolognesi - INFN Torino / T.Dorigo - INFN Padova
  */
 
 // Base Class Headers
 // ------------------
 #include "FWCore/Framework/interface/EDLooper.h"
-#include "FWCore/ParameterSet/interface/InputTag.h"
+#include "FWCore/Utilities/interface/InputTag.h"
 #include "DataFormats/Candidate/interface/LeafCandidate.h"
 #include <CLHEP/Vector/LorentzVector.h>
 #include <vector>
@@ -80,12 +80,12 @@ class MuScleFit: public edm::EDLooper, MuScleFitBase {
  protected:
   /// Template method used to fill the track collection starting from reco::muons or pat::muons
   template<typename T>
-  void takeSelectedMuonType(const T & muon, vector<reco::Track> & tracks);
+  void takeSelectedMuonType(const T & muon, std::vector<reco::Track> & tracks);
 
   /// Check if two lorentzVector are near in deltaR
   bool checkDeltaR( reco::Particle::LorentzVector& genMu, reco::Particle::LorentzVector& recMu );
   /// Fill the reco vs gen and reco vs sim comparison histograms
-  void fillComparisonHistograms( const reco::Particle::LorentzVector & genMu, const reco::Particle::LorentzVector & recoMu, const string & inputName, const int charge );
+  void fillComparisonHistograms( const reco::Particle::LorentzVector & genMu, const reco::Particle::LorentzVector & recoMu, const std::string & inputName, const int charge );
 
   /**
    * Simple method to check parameters consistency. It aborts the job if the parameters
@@ -151,17 +151,17 @@ std::vector<reco::LeafCandidate> MuScleFit::fillMuonCollection( const std::vecto
     // Apply smearing if needed, and then bias
     // ---------------------------------------
     MuScleFitUtils::goodmuon++;
-    if (debug_>0) cout <<setprecision(9)<< "Muon #" << MuScleFitUtils::goodmuon 
-                       << ": initial value   Pt = " << mu.Pt() << endl;
+    if (debug_>0) std::cout << std::setprecision(9)<< "Muon #" << MuScleFitUtils::goodmuon 
+                       << ": initial value   Pt = " << mu.Pt() << std::endl;
     if (MuScleFitUtils::SmearType>0) {
       mu = MuScleFitUtils::applySmearing( mu );
-      if (debug_>0) cout << "Muon #" << MuScleFitUtils::goodmuon 
-                         << ": after smearing  Pt = " << mu.Pt() << endl;
+      if (debug_>0) std::cout << "Muon #" << MuScleFitUtils::goodmuon 
+                         << ": after smearing  Pt = " << mu.Pt() << std::endl;
     } 
     if (MuScleFitUtils::BiasType>0) {
       mu = MuScleFitUtils::applyBias( mu, track->charge() );
-      if (debug_>0) cout << "Muon #" << MuScleFitUtils::goodmuon 
-                         << ": after bias      Pt = " << mu.Pt() << endl;
+      if (debug_>0) std::cout << "Muon #" << MuScleFitUtils::goodmuon 
+                         << ": after bias      Pt = " << mu.Pt() << std::endl;
     }
     reco::LeafCandidate muon(track->charge(),mu);
     // Store modified muon
@@ -172,9 +172,9 @@ std::vector<reco::LeafCandidate> MuScleFit::fillMuonCollection( const std::vecto
 }
 
 template<typename T>
-void MuScleFit::takeSelectedMuonType(const T & muon, vector<reco::Track> & tracks)
+void MuScleFit::takeSelectedMuonType(const T & muon, std::vector<reco::Track> & tracks)
 {
-  // cout<<"muon "<<muon->isGlobalMuon()<<muon->isStandAloneMuon()<<muon->isTrackerMuon()<<endl;
+  // std::cout<<"muon "<<muon->isGlobalMuon()<<muon->isStandAloneMuon()<<muon->isTrackerMuon()<<std::endl;
   //NNBB: one muon can be of many kinds at once but with the theMuonType_ we are sure
   // to avoid double counting of the same muon
   if(muon->isGlobalMuon() && theMuonType_==1)

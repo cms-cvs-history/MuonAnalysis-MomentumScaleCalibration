@@ -10,21 +10,19 @@
 #include "TFile.h"
 #include "MuonAnalysis/MomentumScaleCalibration/interface/Histograms.h"
 #include "MuonAnalysis/MomentumScaleCalibration/interface/MuScleFitUtils.h"
-#include "FWCore/ParameterSet/interface/InputTag.h"
+#include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
-
-using namespace std;
 
 class MuScleFitBase
 {
 public:
   MuScleFitBase(const edm::ParameterSet& iConfig) :
-    probabilitiesFileInPath_( iConfig.getUntrackedParameter<string>( "ProbabilitiesFileInPath" , "MuonAnalysis/MomentumScaleCalibration/test/Probs_new_Horace_CTEQ_1000.root" ) ),
-    probabilitiesFile_( iConfig.getUntrackedParameter<string>( "ProbabilitiesFile" , "" ) ),
+    probabilitiesFileInPath_( iConfig.getUntrackedParameter<std::string>( "ProbabilitiesFileInPath" , "MuonAnalysis/MomentumScaleCalibration/test/Probs_new_Horace_CTEQ_1000.root" ) ),
+    probabilitiesFile_( iConfig.getUntrackedParameter<std::string>( "ProbabilitiesFile" , "" ) ),
     theMuonType_( iConfig.getParameter<int>( "MuonType" ) ),
     theMuonLabel_( iConfig.getParameter<edm::InputTag>( "MuonLabel" ) ),
-    theRootFileName_( iConfig.getUntrackedParameter<string>("OutputFileName") ),
-    theGenInfoRootFileName_( iConfig.getUntrackedParameter<string>("OutputGenInfoFileName", "genSimRecoPlots.root") ),
+    theRootFileName_( iConfig.getUntrackedParameter<std::string>("OutputFileName") ),
+    theGenInfoRootFileName_( iConfig.getUntrackedParameter<std::string>("OutputGenInfoFileName", "genSimRecoPlots.root") ),
     debug_( iConfig.getUntrackedParameter<int>("debug",0) ),
     useType_( iConfig.getUntrackedParameter<unsigned int>("UseType",0) )
   {}
@@ -48,13 +46,13 @@ protected:
   /// Raed probability distributions from a local root file.
   void readProbabilityDistributionsFromFile();
 
-  string probabilitiesFileInPath_;
-  string probabilitiesFile_;
+  std::string probabilitiesFileInPath_;
+  std::string probabilitiesFile_;
 
   int theMuonType_;
   edm::InputTag theMuonLabel_;
-  string theRootFileName_;
-  string theGenInfoRootFileName_;
+  std::string theRootFileName_;
+  std::string theGenInfoRootFileName_;
 
   int debug_;
 
@@ -65,7 +63,7 @@ protected:
   std::vector<TFile*> theFiles_;
 
   /// The map of histograms
-  map<string, Histograms*> mapHisto_;
+  std::map<std::string, Histograms*> mapHisto_;
 };
 
 #endif
