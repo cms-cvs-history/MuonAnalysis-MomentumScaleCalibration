@@ -16,7 +16,7 @@
 //
 // Original Author:  Marco De Mattia
 //         Created:  Thu Sep 11 12:16:00 CEST 2008
-// $Id: TestResolution.h,v 1.1 2009/11/03 10:45:16 demattia Exp $
+// $Id: TestResolution.h,v 1.3 2010/01/04 16:33:18 hegner Exp $
 //
 //
 
@@ -51,17 +51,12 @@
 // class decleration
 //
 
-using namespace std;
-using namespace edm;
-using namespace reco;
-
 class TestResolution : public edm::EDAnalyzer {
 public:
   explicit TestResolution(const edm::ParameterSet&);
   ~TestResolution();
 
 private:
-  virtual void beginJob(const edm::EventSetup&) {};
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob() {};
   template<typename T>
@@ -87,14 +82,14 @@ private:
   edm::InputTag theMuonLabel_;
 
   int theMuonType_;
-  string theRootFileName_;
+  std::string theRootFileName_;
   TFile * outputFile_;
 
   TProfile * sigmaPt_;
 
   int eventCounter_;
 
-  auto_ptr<ResolutionFunction> resolutionFunction_;
+  std::auto_ptr<ResolutionFunction> resolutionFunction_;
 };
 
 #endif // TESTRESOLUTION_HH

@@ -1,7 +1,7 @@
 /** See header file for a class description 
  *
- *  $Date: 2009/11/10 11:14:53 $
- *  $Revision: 1.23 $
+ *  $Date: 2010/03/19 21:00:35 $
+ *  $Revision: 1.31 $
  *  \author S. Bolognesi - INFN Torino / T. Dorigo, M. De Mattia - INFN Padova
  */
 // Some notes:
@@ -38,7 +38,7 @@
 #include "TF2.h"
 #include <iostream>
 #include <fstream>
-#include <memory> // to use the std::auto_ptr
+#include <memory> // to use the auto_ptr
 
 // Includes the definitions of all the bias and scale functions
 // These functions are selected in the constructor according
@@ -510,7 +510,7 @@ void MuScleFitUtils::computeEstimator( const lorentzVector& recMu1,
 
   // f[3], g[3]: DM versus muon DPhi
   // -------------------------------
-  ibin = (int)((3.1415926-abs(abs(recMu1.phi()-recMu2.phi())-3.1415926))*100/3.1415926);
+  ibin = (int)((3.1415926-std::abs(std::abs(recMu1.phi()-recMu2.phi())-3.1415926))*100/3.1415926);
   if (ibin>=0 && ibin<100) {
     f[3][ibin] += Mass;
     g[3][ibin] += 1.;
@@ -604,7 +604,7 @@ void MuScleFitUtils::returnEstimator() {
     h[i] = 0;
     for (int j=0; j<100; j++) {
       f[i][j] -= mzave*g[i][j];                          // Return to residuals around zero
-      if (g[i][j]>0) h[i] += abs(f[i][j])/g[i][j]/100.;
+      if (g[i][j]>0) h[i] += std::abs(f[i][j])/g[i][j]/100.;
     }
     cout << Names[i] << ": h function is " << h[i] << endl;
   }
@@ -719,7 +719,7 @@ lorentzVector MuScleFitUtils::fromPtEtaPhiToPxPyPz( const double* ptEtaPhiE )
 
 // Dimuon mass
 // -----------
-inline double MuScleFitUtils::invDimuonMass( const lorentzVector& mu1, 
+double MuScleFitUtils::invDimuonMass( const lorentzVector& mu1, 
                                              const lorentzVector& mu2 )
 {
   return (mu1+mu2).mass();
@@ -786,28 +786,28 @@ double MuScleFitUtils::massResolution( const lorentzVector& mu1,
   double theta2 = 2*atan(exp(-eta2));
   // double cotgTheta2 = cos(theta2)/sin(theta2);
 
-  // double mass_check = sqrt(2*mMu2+2*sqrt(pow(pt1/sin(theta1),2)+mMu2)*sqrt(pow(pt2/sin(theta2),2)+mMu2)-
+  // double mass_check = sqrt(2*mMu2+2*sqrt(std::pow(pt1/sin(theta1),2)+mMu2)*sqrt(std::pow(pt2/sin(theta2),2)+mMu2)-
   //			   2*pt1*pt2*(cos(phi1-phi2)+1/(tan(theta1)*tan(theta2))));
 
   // ATTENTION: need to compute 1/tan(theta) as cos(theta)/sin(theta) because the latter diverges for theta=pi/2
   // -----------------------------------------------------------------------------------------------------------
-  double dmdpt1  = (pt1/pow(sin(theta1),2)*sqrt((pow(pt2/sin(theta2),2)+mMu2)/(pow(pt1/sin(theta1),2)+mMu2))- 
+  double dmdpt1  = (pt1/std::pow(sin(theta1),2)*sqrt((std::pow(pt2/sin(theta2),2)+mMu2)/(std::pow(pt1/sin(theta1),2)+mMu2))- 
 		    pt2*(cos(phi1-phi2)+cos(theta1)*cos(theta2)/(sin(theta1)*sin(theta2))))/mass;
-  double dmdpt2  = (pt2/pow(sin(theta2),2)*sqrt((pow(pt1/sin(theta1),2)+mMu2)/(pow(pt2/sin(theta2),2)+mMu2))- 
+  double dmdpt2  = (pt2/std::pow(sin(theta2),2)*sqrt((std::pow(pt1/sin(theta1),2)+mMu2)/(std::pow(pt2/sin(theta2),2)+mMu2))- 
 		    pt1*(cos(phi2-phi1)+cos(theta2)*cos(theta1)/(sin(theta2)*sin(theta1))))/mass;
   double dmdphi1 = pt1*pt2/mass*sin(phi1-phi2);
   double dmdphi2 = pt2*pt1/mass*sin(phi2-phi1);
-  // double dmdtheta1 = (-pow(pt1/sin(theta1),2)/tan(theta1)*
-  //	 	        sqrt((pow(pt2/sin(theta2),2)+mMu2)/(pow(pt1/sin(theta1),2)+mMu2))+
+  // double dmdtheta1 = (-std::pow(pt1/sin(theta1),2)/tan(theta1)*
+  //	 	        sqrt((std::pow(pt2/sin(theta2),2)+mMu2)/(std::pow(pt1/sin(theta1),2)+mMu2))+
   //		        2*pt1*pt2/(tan(theta2)*pow(sin(theta1),2)))/mass;
-  // double dmdtheta2 = (-pow(pt2/sin(theta2),2)/tan(theta2)*
-  //		        sqrt((pow(pt1/sin(theta1),2)+mMu2)/(pow(pt2/sin(theta2),2)+mMu2))+
+  // double dmdtheta2 = (-std::pow(pt2/sin(theta2),2)/tan(theta2)*
+  //		        sqrt((std::pow(pt1/sin(theta1),2)+mMu2)/(std::pow(pt2/sin(theta2),2)+mMu2))+
   //	                2*pt2*pt1/(tan(theta1)*pow(sin(theta2),2)))/mass;
   double dmdcotgth1 = (pt1*pt1*cos(theta1)/sin(theta1)*
-                       sqrt((pow(pt2/sin(theta2),2)+mMu2)/(pow(pt1/sin(theta1),2)+mMu2)) - 
+                       sqrt((std::pow(pt2/sin(theta2),2)+mMu2)/(std::pow(pt1/sin(theta1),2)+mMu2)) - 
 		       pt1*pt2*cos(theta2)/sin(theta2))/mass;
   double dmdcotgth2 = (pt2*pt2*cos(theta2)/sin(theta2)*
-                       sqrt((pow(pt1/sin(theta1),2)+mMu2)/(pow(pt2/sin(theta2),2)+mMu2)) - 
+                       sqrt((std::pow(pt1/sin(theta1),2)+mMu2)/(std::pow(pt2/sin(theta2),2)+mMu2)) - 
 		       pt2*pt1*cos(theta1)/sin(theta1))/mass;
 
   if( debugMassResol_ ) {
@@ -830,11 +830,11 @@ double MuScleFitUtils::massResolution( const lorentzVector& mu1,
 
   // Sigma_Pt is defined as a relative sigmaPt/Pt for this reason we need to
   // multiply it by pt.
-  double mass_res = sqrt(pow(dmdpt1*sigma_pt1*pt1,2)+pow(dmdpt2*sigma_pt2*pt2,2)+
-  			 pow(dmdphi1*sigma_phi1,2)+pow(dmdphi2*sigma_phi2,2)+
-  			 pow(dmdcotgth1*sigma_cotgth1,2)+pow(dmdcotgth2*sigma_cotgth2,2));
+  double mass_res = sqrt(std::pow(dmdpt1*sigma_pt1*pt1,2)+std::pow(dmdpt2*sigma_pt2*pt2,2)+
+  			 std::pow(dmdphi1*sigma_phi1,2)+std::pow(dmdphi2*sigma_phi2,2)+
+  			 std::pow(dmdcotgth1*sigma_cotgth1,2)+std::pow(dmdcotgth2*sigma_cotgth2,2));
 
-  // double mass_res = sqrt(pow(dmdpt1*sigma_pt1*pt1,2)+pow(dmdpt2*sigma_pt2*pt2,2));
+  // double mass_res = sqrt(std::pow(dmdpt1*sigma_pt1*pt1,2)+std::pow(dmdpt2*sigma_pt2*pt2,2));
 
   if (debug>19) { 
     cout << "  Pt1=" << pt1 << " phi1=" << phi1 << " cotgth1=" << cos(theta1)/sin(theta1) << " - Pt2=" << pt2 
@@ -1235,7 +1235,7 @@ double MuScleFitUtils::massProb( const double & mass, const double & rapidity, c
 }
 
 // Method to check if the mass value is within the mass window of the i-th resonance.
-inline bool MuScleFitUtils::checkMassWindow( const double & mass, const int ires, const double & resMass, const double & leftFactor, const double & rightFactor )
+bool MuScleFitUtils::checkMassWindow( const double & mass, const int ires, const double & resMass, const double & leftFactor, const double & rightFactor )
 {
 //   return( mass-ResMass[ires] > -leftFactor*massWindowHalfWidth[ires][MuonTypeForCheckMassWindow]
 //           && mass-ResMass[ires] < rightFactor*massWindowHalfWidth[ires][MuonTypeForCheckMassWindow] );

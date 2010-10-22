@@ -4,8 +4,8 @@
 /** \class MuScleFitPlotter
  *  Plotter of the muon info (sim,gen,rec)
  *
- *  $Date: 2009/10/28 16:55:44 $
- *  $Revision: 1.6 $
+ *  $Date: 2009/11/03 07:39:18 $
+ *  $Revision: 1.7 $
  *  \author C.Mariotti, S.Bolognesi - INFN Torino / T.Dorigo - INFN Padova
  */
 
@@ -29,7 +29,7 @@ class MuScleFitPlotter{
  public:
   // Constructor
   // -----------
-  MuScleFitPlotter(string);
+  MuScleFitPlotter(std::string);
 
   // Destructor
   // ----------

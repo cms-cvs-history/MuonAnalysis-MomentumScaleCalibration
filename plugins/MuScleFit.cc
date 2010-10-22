@@ -1,8 +1,8 @@
 //  \class MuScleFit
 //  Fitter of momentum scale and resolution from resonance decays to muon track pairs
 //
-//  $Date: 2009/11/03 07:42:53 $
-//  $Revision: 1.66 $
+//  $Date: 2009/11/10 11:15:27 $
+//  $Revision: 1.67 $
 //  \author R. Bellan, C.Mariotti, S.Bolognesi - INFN Torino / T.Dorigo, M.De Mattia - INFN Padova
 //
 //  Recent additions: 
@@ -269,7 +269,7 @@ MuScleFit::MuScleFit( const ParameterSet& pset ) : MuScleFitBase( pset ), totalE
   // -----------------------------------------------------------
   if (MuScleFitUtils::SmearType>0) {
     cout << "[MuScleFit-Constructor]: Generating random values for smearing" << endl;
-    TF1 G("G", "[0]*exp(-0.5*pow(x,2))", -5., 5.);
+    TF1 G("G", "[0]*exp(-0.5*std::pow(x,2))", -5., 5.);
     double norm = 1/sqrt(2*TMath::Pi());
     G.SetParameter (0,norm);
     for (int i=0; i<10000; i++) {
@@ -808,8 +808,8 @@ edm::EDLooper::Status MuScleFit::duringFastLoop()
           // Fill with mass resolution from resolution function
           double massRes = MuScleFitUtils::massResolution(recMu1, recMu2, MuScleFitUtils::parResol);
           // The value given by massRes is already divided by the mass, since the derivative functions have mass at the denominator.
-          mapHisto_["hFunctionResolMass"]->Fill( recMu1, pow(massRes,2), -1 );
-          mapHisto_["hFunctionResolMass"]->Fill( recMu2, pow(massRes,2), +1 );
+          mapHisto_["hFunctionResolMass"]->Fill( recMu1, std::pow(massRes,2), -1 );
+          mapHisto_["hFunctionResolMass"]->Fill( recMu2, std::pow(massRes,2), +1 );
         }
 
         mapHisto_["hMass_P"]->Fill(bestRecRes.mass(), prob);
