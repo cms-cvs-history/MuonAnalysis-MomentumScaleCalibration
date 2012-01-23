@@ -4,8 +4,8 @@
 /** \class Histograms
  *  Collection of histograms for GLB muon analysis
  *
- *  $Date: 2010/10/19 16:36:51 $
- *  $Revision: 1.25 $
+ *  $Date: 2010/10/22 17:47:21 $
+ *  $Revision: 1.27 $
  *  \author S. Bolognesi - INFN Torino / T.Dorigo - INFN Padova
  */
 
@@ -1944,9 +1944,9 @@ class HMassResolutionVSPart : public Histograms
     int index = 0;
     for( int i=0; i<2; ++i ) {
       index = id[i];
-      mapHisto_[name_+"VSPt"+nameSuffix_[i]]->Fill(recoPt[i], massRes);
-      mapHisto_[name_+"VSEta"+nameSuffix_[i]]->Fill(recoEta[i], massRes);
-      mapHisto_[name_+"VSPhi"+nameSuffix_[i]]->Fill(recoPhi[i], massRes);
+      mapHisto_[name_+"VSPt"+nameSuffix_[i]]->Fill(recoPt[index], massRes);
+      mapHisto_[name_+"VSEta"+nameSuffix_[i]]->Fill(recoEta[index], massRes);
+      mapHisto_[name_+"VSPhi"+nameSuffix_[i]]->Fill(recoPhi[index], massRes);
     }
   } 
 
