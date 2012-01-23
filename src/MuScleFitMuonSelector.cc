@@ -271,7 +271,6 @@ void MuScleFitMuonSelector::selectGenSimMuons(const edm::Event & event,
 
   // Fill gen information only in the first loop
   bool ifHepMC=false;
-  bool ifGenPart=false;
 
   event.getByLabel( genParticlesName_, evtMC );
   event.getByLabel( genParticlesName_, genParticles );
@@ -284,7 +283,6 @@ void MuScleFitMuonSelector::selectGenSimMuons(const edm::Event & event,
   else if( genParticles.isValid() ) {
     genPair.push_back( findGenMuFromRes(genParticles.product()) );
     plotter->fillGen1(genParticles.product());
-    ifGenPart=true;
     if (debug_>0) std::cout << "Found genParticles" << std::endl;
   }
   else {
